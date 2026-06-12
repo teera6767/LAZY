@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ยินดีต้อนรับสู่โลกของ Lazy</title>
+    <title>Lazy Product Scanner</title>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <style>
         * {
             margin: 0;
@@ -13,116 +14,157 @@
         }
 
         body {
-            background-color: #f4f7f6;
+            background-color: #f5f7fb;
             color: #333;
-            line-height: 1.6;
+            padding: 20px;
         }
 
-        header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-align: center;
-            padding: 5rem 1rem;
-        }
-
-        header h1 {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-        }
-
-        header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
-        }
-
-        section {
+        .wrapper {
+            max-width: 600px;
+            margin: 0 auto;
             background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 2rem;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
 
-        h2 {
-            color: #764ba2;
-            margin-bottom: 1rem;
-            border-bottom: 2px solid #f4f7f6;
-            padding-bottom: 0.5rem;
-        }
-
-        .skills-list {
-            list-style: none;
-        }
-
-        .skills-list li {
-            background: #f4f7f6;
-            margin: 0.5rem 0;
-            padding: 0.75rem;
-            border-left: 4px solid #667eea;
-            border-radius: 0 4px 4px 0;
-        }
-
-        footer {
+        h1 {
             text-align: center;
-            padding: 2rem;
-            color: #777;
-            font-size: 0.9rem;
+            color: #4f46e5;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
         }
 
-        .contact-link {
-            color: #667eea;
-            text-decoration: none;
+        p.subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        /* กล่องแสดงหน้าจอเซนเซอร์กล้อง */
+        #reader {
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px dashed #4f46e5 !important;
+            background: #fafafa;
+        }
+
+        /* ส่วนแสดงผลลัพธ์ */
+        .result-container {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border-left: 5px solid #4f46e5;
+            display: none; /* ซ่อนไว้ก่อนจนกว่าจะสแกนเจอ */
+        }
+
+        .result-container.active {
+            display: block;
+        }
+
+        .product-name {
+            font-size: 1.3rem;
             font-weight: bold;
+            color: #1e293b;
+            margin-bottom: 10px;
         }
 
-        .contact-link:hover {
-            text-decoration: underline;
+        .ingredients-title {
+            font-weight: 600;
+            color: #4f46e5;
+            margin-bottom: 5px;
+        }
+
+        .ingredients-text {
+            color: #475569;
+            line-height: 1.6;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .loading {
+            text-align: center;
+            color: #888;
+            display: none;
+            margin: 15px 0;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Hello, I'm Lazy!</h1>
-        <p>ยินดีต้อนรับเข้าสู่พื้นที่ส่วนตัวแบบชิลๆ ของผม</p>
-    </header>
+    <div class="wrapper">
+        <h1>Lazy Scanner 🔍</h1>
+        <p class="subtitle">สแกนบาร์โค้ดบนบรรจุภัณฑ์เพื่อดูส่วนประกอบสินค้า</p>
 
-    <div class="container">
-        
-        <section>
-            <h2>เกี่ยวกับฉัน (About Me)</h2>
-            <p>สวัสดีครับ ผมชื่อ <strong>Lazy</strong> ยินดีที่ได้รู้จักทุกคนที่หลงเข้ามาในหน้าเว็บนี้ครับ หน้าเว็บนี้สร้างขึ้นมาเพื่อแนะนำตัวตน ไลฟ์สไตล์ และสิ่งที่ผมสนใจแบบเรียบง่าย</p>
-        </section>
+        <div id="reader"></div>
 
-        <section>
-            <h2>สิ่งที่สนใจ & ทักษะ (Interests & Skills)</h2>
-            <ul class="skills-list">
-                <li>☕ หลงใหลในการดื่มกาแฟ และการหาร้านคาเฟ่นั่งทำงานชิลๆ</li>
-                <li>💻 สนใจการพัฒนาเว็บไซต์ และเทคโนโลยีใหม่ๆ (กำลังเริ่มต้นเรียนรู้!)</li>
-                <li>🎮 เล่นเกมผ่อนคลายในวันว่าง</li>
-                <li>🎧 ฟังเพลงแนว Lo-fi ช่วยให้โฟกัสกับงานได้ดีขึ้น</li>
-            </ul>
-        </section>
+        <div id="loading" class="loading">⏳ กำลังค้นหาข้อมูลส่วนประกอบ...</div>
 
-        <section>
-            <h2>ช่องทางการติดต่อ (Contact)</h2>
-            <p>หากอยากพูดคุย แลกเปลี่ยนไอเดีย หรือติดต่อเรื่องงาน สามารถทักมาได้ที่นี่เลยครับ:</p>
-            <br>
-            <p>📧 Email: <a class="contact-link" href="mailto:your-email@example.com">lazy.contact@email.com</a></p>
-            <p>🌐 GitHub: <a class="contact-link" href="https://github.com" target="_blank">github.com/lazy</a></p>
-        </section>
-
+        <div id="result-box" class="result-container">
+            <div id="product-title" class="product-name">ชื่อสินค้าจะแสดงตรงนี้</div>
+            <div class="ingredients-title">ส่วนประกอบ (Ingredients):</div>
+            <div id="product-ingredients" class="ingredients-text">ข้อมูลส่วนประกอบ...</div>
+        </div>
     </div>
 
-    <footer>
-        <p>&copy; 2026 Lazy. All Rights Reserved. Built with ❤️ and a bit of laziness.</p>
-    </footer>
+    <script>
+        // ฟังก์ชันเมื่อสแกนบาร์โค้ดสำเร็จ
+        function onScanSuccess(decodedText, decodedResult) {
+            // หยุดสแกนชั่วคราวเพื่อประมวลผล
+            html5QrcodeScanner.clear();
+            
+            const loadingEl = document.getElementById('loading');
+            const resultBox = document.getElementById('result-box');
+            
+            loadingEl.style.display = 'block';
+            resultBox.classList.remove('active');
 
+            // ยิง API ไปที่ Open Food Facts เพื่อค้นหาข้อมูลบาร์โค้ดนั้นๆ
+            fetch(`https://world.openfoodfacts.org/api/v2/product/${decodedText}.json`)
+                .then(response => response.json())
+                .then(data => {
+                    loadingEl.style.display = 'none';
+                    resultBox.classList.add('active');
+
+                    if (data.status === 1) {
+                        const product = data.product;
+                        // ดึงชื่อสินค้า (ถ้ามีภาษาไทยให้ใช้ภาษาไทย ถ้าไม่มีใช้ชื่อทั่วไป)
+                        document.getElementById('product-title').innerText = product.product_name_th || product.product_name || "ไม่ระบุชื่อสินค้า";
+                        
+                        // ดึงข้อมูลส่วนประกอบ
+                        document.getElementById('product-ingredients').innerText = product.ingredients_text_th || product.ingredients_text || "ขออภัย ไม่มีข้อมูลส่วนประกอบของสินค้านี้ในระบบ";
+                    } else {
+                        document.getElementById('product-title').innerText = "ไม่พบสินค้า";
+                        document.getElementById('product-ingredients').innerText = `ไม่พบข้อมูลของบาร์โค้ดรหัส: ${decodedText} ในฐานข้อมูล`;
+                    }
+                    
+                    // หน่วงเวลา 5 วินาทีแล้วเปิดกล้องสแกนใหม่
+                    setTimeout(startScanner, 5000);
+                })
+                .catch(error => {
+                    loadingEl.style.display = 'none';
+                    alert("เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูลครับ");
+                    setTimeout(startScanner, 3000);
+                });
+        }
+
+        // ฟังก์ชันสั่งให้กล้องเริ่มทำงาน
+        let html5QrcodeScanner;
+        function startScanner() {
+            html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
+                fps: 10, 
+                qrbox: { width: 250, height: 150 } // กำหนดกรอบสแกนให้เหมาะกับบาร์โค้ดแนวนอน
+            }, false);
+            html5QrcodeScanner.render(onScanSuccess);
+        }
+
+        // เริ่มเปิดกล้องตอนโหลดหน้าเว็บครั้งแรก
+        window.addEventListener('DOMContentLoaded', startScanner);
+    </script>
 </body>
 </html>
